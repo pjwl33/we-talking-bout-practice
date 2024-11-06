@@ -1,0 +1,107 @@
+1. # Sliding Window Patterns: looking at window and 1 step at a time
+# find subset in a list/array
+# problem asked to find subset of elements that satisfies a pattern
+# longest or shortest substring, linear data structure with k-unique chars
+
+
+2. SubSet pattern: find all possible combinations of elements from a given set
+- repetitions may or may not be allowed in the subset
+- permutations problem, all the arrangements
+- start empty set and then add with one, BFS (breadth first search)
+
+3. Modified Binary Search pattern
+- code idea remains the same but change the logic for the
+- sorted:
+```
+# recursively
+def binarySearch(arr, low, high, x):
+	if high >= low:
+		mid = (high + low) // 2
+		if arr[mid] == x:
+			return mid
+		elif arr[mid] > x:
+			return binarySearch(arr, low, mid - 1, x)
+		else:
+			return binarySearch(arr, mid + 1, high, x)
+	else
+		return -1
+
+# iteratively
+def binarySearch(arr, x):
+	low, high = 0, len(arr) - 1
+	while low <= high
+		mid = low + (high - low) // 2
+
+		if arr[mid] == x:
+			return mid
+		elif arr[mid] > x:
+			high = mid - 1
+		else:
+			low = mid + 1
+
+		return -1
+```
+
+4. Top K Elements Pattern (find k largest nums in array)
+- usually linear data structure
+- find kth largest element in array - can use a heap for this to move finding and removing smallest number easy
+
+5. Binary Tree DFS Pattern
+- focusing on one brunch at a time
+```
+###################################################
+# USED FOR - FIND STRONG RELATIONSHIPS IN GRAPH, FINDING ONE PATH,
+# TEST IF GRAPH IS BIPARTITE, DETECTING CYCLES IN GRAPH, TOPOLOGICAL SORTING
+# SOLVING PUZZLES WITH ONE SOLUTION, NETWORK ANALYSIS, MAPPING ROUTES,
+# SCHEDULING A PROBLEM
+# O (V + E) TC, O (V) SC
+visited = set()
+def dfs(visited, graph, node):
+    if node not in visited:
+        print(node) # do something with node
+        visited.add(node)
+        for n in graph[node]:
+            dfs(visited, graph, n)
+
+# Driver Code
+print("Following is the Depth-First Search")
+dfs(visited, graph, '5')
+
+```
+
+6. Topological Sort - Directed Acyclic Graph
+- Graph has one way connection
+- No Cycle
+
+7. Binary Tree BFS (use q)
+```
+graph = {
+  '5' : ['3','7'],
+  '3' : ['2', '4'],
+  '7' : ['8'],
+  '2' : [],
+  '4' : ['8'],
+  '8' : []
+}
+
+visited, q = [], []
+def bfs(visited, graph, node):
+    visited.append(node)
+    q.append(node)
+
+    while q:
+        m = q.pop(0)
+        print(m) # do something with node
+        for n in graph[m]:
+            if n not in visited:
+                visited.append(n)
+                q.append(n)
+
+# Driver Code
+print("Following is the Breadth-First Search")
+bfs(visited, graph, '5')    # function calling
+```
+
+8. 2 Pointer Problem
+- slow / fast moving
+- in a single pass (when sorted)

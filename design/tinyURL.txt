@@ -1,0 +1,28 @@
+TinyURL
+
+FR
+* user cannot design / specify their shortened key
+* let's say key for shortened URL is 8 chars
+* 1 year expiration, or users can have longer period of URL life
+	- don't want to run out of resources
+* but users should have access to same URL, and also that user should only
+	be able to delete (has ownership)
+* would we need to create new one even if there is a same URL but different users?
+* Write - create the URL
+* Read - use a lot more to retrieve the URL (use a HashMap)
+	- clarify the ratio? 1 W: 100 R
+
+NFR
+* minimal latency as possible
+* 1 B requests a month? Will we run out of the 8 chars? 0-9, a-z, A-Z (62 chars, 62^8)
+* Throughput - 400 writes / second - about 30,000 read per second (scale / bottleneck)
+* 8 bytes storing (maybe some more metadata) for key, but lets say we need to add the URL
+	- as well as maybe user data - so about 1kB or less, so 1TB a month
+
+General / High-Level
+* Just mapping longURL to shortURL - not a lot of joins or queries, no atomic transitions
+* Read a replica so maybe can use NoSQL (faster reads)
+* Deal with repeat char keys
+	- have a lot of the 8char keys pre-populated in the keys database
+	- find a key that hasn't be used yet
+	- fetch the keys

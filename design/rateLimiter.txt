@@ -1,0 +1,48 @@
+1. Main reason - put a limit on bots from spamming
+
+Questions:
+1. Are we designing a RL for Backend API? A single microservice or not?
+	- for MS - you can add code maybe using a HashMap and do the RL there instead of multiple MS
+	- Let's say we are designing this to protect multiple APIs
+		- Upload (can have multiple instances of these APIs, need to be in sync)
+		- Comment
+		-
+
+General
+* If rate is reached, then tell user they are being throttled, with a return status 429 or time period (24 hours, etc.)
+* If just implemented the client-side, in theory, can reverse-engineer the client-side and then keep hitting
+	the RL on the client side with a curl or something
+
+FR:
+* How do we set the limit? Throttle or status, etc.
+* Implement as own component and not client-side?
+* General as possible for an ID that's coming in for request (IPv4 possible)
+* Storage and Rules?
+	- What are we storing
+	- # of Users? Are we checking based on IP address for users, etc.? Let's say 1B users,
+		how much data stored per (how much can fit in memory)
+
+NFR:
+* Latency very important (low as possible)
+	- Because the RL will go for an extra check so it will add time
+	- Throughput, should be able to handle a lot (scalable, horizontally) - how many requests?
+* Availability (5 9s - 99.999%)
+	- Fail-open (use as RL never existed) - maybe close the requests for comments, etc.
+	- Fail-closed - take down entire app (which may not be great)
+
+GET REQS FOR 5-10 MINUTES and ask for CLARIFICATION and DISCUSS TRADE-OFFS THROUGHOUT
+
+High-Level Design (image)
+- RL hit first, like reverse proxy
+- Rule needs to be in storage
+- Memory KV store (Redis or Memcache) to see how many in past 24 hours
+	- data is within the size limit of the KV store for memory
+- How do we design the algo for limiting?
+	- Sliding window - maybe 1 second before and check the requests before that and now
+	- Let's say it is limited to 100/min
+	- But then we need to store based on timestamp, and let's say it's all 4 byte PER REQ
+	- So then delete the old data in store
+
+Schema
+- If we need to store more in the KV/Memory (1 TB for example), then we can
+	- potentially do some sharding in the store maybe as consistent hashing
