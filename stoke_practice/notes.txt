@@ -1,0 +1,63 @@
+Acknowledge the Trade-off: Tell the interviewer: 
+
+"I chose REST for this exercise to ensure high code quality and reliability within the 90-minute window, 
+though I'm familiar with the benefits GraphQL offers for Boltline’s complex data graphs".
+
+
+Testing: If you have 5 minutes left, write one Jest test for your main utility function to show you value a strong testing culture.
+
+Key "Talking Points" for the Interview
+When writing this code (or explaining it), explicitly mention:
+
+-- In Controller / Schema / Frontend -- 
+
+Atomic Transactions: "I used prisma.$transaction for the test results because we can't afford to have a 'Zombie Test' created if the status update fails.
+In aerospace, data consistency is safety."
+
+Recursive Creation: "I'm using Prisma's nested writes to create the Parent and Children in one go, which reduces DB round-trips."
+
+Unique Constraints: "I added @unique to the serial number in the schema because duplicates in a manufacturing line cause massive supply chain headaches."
+
+Lead Engineer Talking Points
+If you write code like this during the interview, here is what you should explain to the interviewer:
+
+Nested Writes (children: { create: ... }): Mention that you used Prisma's nested write feature in the POST route.
+This is powerful for Boltline because assemblies (like a circuit board) are often manufactured and logged into the system as a single batch, not one by one.
+
+Protective Deletes: Explain why you added the check in the DELETE route.\
+In a supply chain system, referential integrity is key. Deleting a parent part shouldn't leave "ghost" child parts in the warehouse database.
+
+Partial Updates (PATCH): Point out that you used PATCH instead of PUT. PUT implies replacing the whole resource, while PATCH (and the logic inside)
+allows an engineer to just update a status from PENDING to PASS without needing to re-send the part name or serial number.
+
+
+4. Why this helps you in the interview
+No Syntax Errors: You won't accidentally mistype SELECR or forget a semicolon in a SQL string.
+
+Speed: You define the model in the schema file, and the client instantly updates. 
+If you change status from a String to an Enum, Typescript/Intellisense will immediately red-underline any code that is using it wrong.
+
+Pro-Tip for the Assessment: If you get stuck on a complex Prisma query, don't stall. You can always write "logic" in JavaScript.
+
+Prisma way (Better): findMany({ where: { status: 'FAIL' } })
+
+JavaScript way (Fallback): const parts = await prisma.part.findMany(); const fails = parts.filter(p => p.status === 'FAIL');
+
+The second way is slower for the database, but in a 90-minute coding challenge, getting it working is more important than optimization.
+
+Why This Structure Wins Points
+The /server vs /client Split:
+
+Why: It shows you aren't confusing your server-side logic (database connections) with your client-side code (browser rendering). Even though Next.js can do API routes, 
+breaking out a dedicated Express server (since you requested a Node backend) makes the architecture obvious and easier to test in isolation.
+
+The /prisma Folder:
+
+Why: This is the heart of your data layer. Having schema.prisma at the root of your server folder makes it easy for the interviewer to instantly see your data model \
+without digging through code.
+
+The /types Folder (in Client):
+
+Why: Since you are using TypeScript, you need to define what a "Part" looks like in the frontend.
+
+Pro-Tip: In a real monorepo, you’d share these. In an interview, manually copying the interfaces from your Prisma schema to this folder shows you care about End-to-End Type Safety.

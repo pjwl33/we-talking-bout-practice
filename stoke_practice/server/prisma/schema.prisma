@@ -1,0 +1,68 @@
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. Define the Part (Recursive Relation for Assemblies)
+model Part {
+  id           String       @id @default(uuid())
+  name         String
+  serialNumber String       @unique
+  status       PartStatus   @default(PENDING)
+  
+  // Self-relation: A Part can have a Parent (Assembly)
+  parentId     String?
+  parent       Part?        @relation("AssemblyParts", fields: [parentId], references: [id])
+  children     Part[]       @relation("AssemblyParts")
+
+  // Relation to Tests
+  testResults  TestResult[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// 2. Define the Test Result (The Audit Trail)
+model TestResult {
+  id        String   @id @default(uuid())
+  type      String   // e.g. "Pressure Test", "Visual Inspection"
+  result    TestStatus
+  notes     String?
+  
+  partId    String
+  part      Part     @relation(fields: [partId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum PartStatus {
+  PENDING
+  ASSEMBLY_IN_PROGRESS
+  READY_FOR_TEST
+  PASS
+  FAIL
+}
+
+enum TestStatus {
+  PASS
+  FAIL
+}
+
+
+// Prisma is absolutely the tool to lean on for this assessment. While you can skip GraphQL and use REST, skipping Prisma for raw SQL would be a mistake. 
+// It handles all the messy database work (connections, mapping, types) so you can focus on the logic.
+
+// Here is your Prisma Crash Course for the interview.
+
+// 1. What is Prisma?
+// It is a modern ORM (Object-Relational Mapper). Instead of writing SQL strings like SELECT * FROM parts WHERE id = 1, 
+// you write JavaScript objects: prisma.part.findUnique({ where: { id: 1 } }).
+
+// Why it saves you time:
+
+// Auto-completion: As soon as you type prisma.part., your editor shows you exactly what methods are available (find, create, update).
+
+// Type Safety: It knows that a Part has a serialNumber string, so it won't let you try to save a number there.

@@ -1,0 +1,30 @@
+{
+  "id": "eng-nova-001",
+  "name": "Nova Stage 1 Engine",
+  "serialNumber": "SN-2026-X99",
+  "status": "ASSEMBLY_IN_PROGRESS",
+  "tests": [
+    { "id": "t-101", "type": "Pressure Test", "result": "PASS", "date": "2026-02-01T10:00:00Z" },
+    { "id": "t-102", "type": "Visual Inspection", "result": "PASS", "date": "2026-02-02T14:30:00Z" }
+  ],
+  "children": [
+    {
+      "id": "val-fuel-09",
+      "name": "Fuel Injector Valve",
+      "serialNumber": "VLV-99",
+      "status": "PASS",
+      "tests": [
+        { "id": "t-201", "type": "Flow Rate", "result": "PASS", "date": "2026-01-20T09:00:00Z" }
+      ]
+    },
+    {
+      "id": "noz-main-02",
+      "name": "Main Nozzle Assembly",
+      "serialNumber": "NZL-02",
+      "status": "FAIL", 
+      "tests": [
+        { "id": "t-301", "type": "Thermal Stress", "result": "FAIL", "date": "2026-01-25T11:15:00Z" }
+      ]
+    }
+  ]
+}
